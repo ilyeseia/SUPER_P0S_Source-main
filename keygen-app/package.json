@@ -1,0 +1,33 @@
+{
+    "name": "ultra-pos-keygen",
+    "version": "1.0.0",
+    "description": "Activation Key Generator for ULTRA_POS",
+    "main": "main.js",
+    "author": "ULTRA_POS Developer",
+    "scripts": {
+        "start": "electron .",
+        "build": "electron-builder"
+    },
+    "devDependencies": {
+        "electron": "^22.3.27",
+        "electron-builder": "^24.13.3"
+    },
+    "build": {
+        "appId": "com.ultrapos.keygen",
+        "productName": "ULTRA_POS Keygen",
+        "copyright": "Copyright © 2026 ULTRA_POS Developer",
+        "directories": {
+            "output": "dist"
+        },
+        "win": {
+            "target": "nsis"
+        },
+        "nsis": {
+            "oneClick": false,
+            "allowToChangeInstallationDirectory": true,
+            "createDesktopShortcut": true,
+            "createStartMenuShortcut": true,
+            "shortcutName": "ULTRA_POS Keygen"
+        }
+    }
+}

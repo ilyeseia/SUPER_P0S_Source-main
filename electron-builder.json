@@ -1,0 +1,63 @@
+{
+    "appId": "com.ultrapos.cashiersystem",
+    "productName": "ULTRA_POS Cashier System",
+    "copyright": "Copyright © 2026 ULTRA_POS Developer",
+    "directories": {
+        "output": "dist",
+        "buildResources": "build"
+    },
+    "files": [
+        "src/**/*",
+        "node_modules/**/*",
+        "package.json"
+    ],
+    "extraResources": [
+        {
+            "from": "database",
+            "to": "database",
+            "filter": [
+                "**/*"
+            ]
+        }
+    ],
+    "win": {
+        "target": [
+            {
+                "target": "nsis",
+                "arch": [
+                    "x64"
+                ]
+            },
+            {
+                "target": "portable",
+                "arch": [
+                    "x64"
+                ]
+            }
+        ],
+        "artifactName": "${productName}-${version}-Setup.${ext}",
+        "publisherName": "ULTRA_POS Developer",
+        "requestedExecutionLevel": "asInvoker"
+    },
+    "nsis": {
+        "oneClick": false,
+        "perMachine": false,
+        "allowElevation": true,
+        "allowToChangeInstallationDirectory": true,
+        "createDesktopShortcut": true,
+        "createStartMenuShortcut": true,
+        "shortcutName": "${productName}",
+        "runAfterFinish": true,
+        "deleteAppDataOnUninstall": false,
+        "installerLanguages": [
+            "en_US",
+            "ar_SA"
+        ],
+        "language": "1033"
+    },
+    "portable": {
+        "artifactName": "${productName}-${version}-Portable.${ext}"
+    },
+    "compression": "normal",
+    "npmRebuild": true
+}

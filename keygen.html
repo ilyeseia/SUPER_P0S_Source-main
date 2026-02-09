@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Générateur de Licence ULTRA_POS</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; background: #f5f5f7; color: #333; }
+        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { margin-top: 0; color: #0066cc; font-size: 24px; text-align: center; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
+        input[type="text"], input[type="date"] { width: 100%; padding: 10px; border: 1px solid #d1d1d6; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
+        button { background: #007aff; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; transition: background 0.2s; }
+        button:hover { background: #0062cc; }
+        .result-area { margin-top: 25px; background: #f2f2f7; padding: 15px; border-radius: 8px; display: none; }
+        textarea { width: 100%; height: 100px; padding: 10px; border: 1px solid #d1d1d6; border-radius: 6px; font-family: monospace; font-size: 13px; resize: none; margin-bottom: 10px; box-sizing: border-box; }
+        .copy-btn { background: #34c759; margin-top: 0; }
+        .copy-btn:hover { background: #28a745; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrsasign/10.9.0/jsrsasign-all-min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Générateur de Licence</h1>
+        
+        <div class="form-group">
+            <label>Device Hash (Code Machine)</label>
+            <input type="text" id="deviceHash" placeholder="Ex: E0D6BC1742BD5ACC..." autocomplete="off">
+        </div>
+        
+        <div class="form-group">
+            <label>Date d'Expiration</label>
+            <input type="date" id="expiryDate" value="2030-12-31">
+        </div>
+
+        <button onclick="generate()">Générer la Clé</button>
+
+        <div id="result" class="result-area">
+            <label>Clé d'Activation:</label>
+            <textarea id="licenseOutput" readonly></textarea>
+            <button class="copy-btn" onclick="copy()">Copier la clé</button>
+        </div>
+    </div>
+
+    <script>
+        // CLE PRIVEE RSA GENEREE
+        const PRIVATE_KEY = `-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCz+KZkZkuvD4Lr\nKGgTIjRX8KSDip5xxQb7z3EeamwKKpBH6T+H26JVQuIQHkbrt1n+wZOpRbDGzM7g\ngeKfWBJV9eLIGMQC3OBAJK8d43sX9leUn8WluTLz5QDb2HNqXZj2VsA/06ZSUDVO\nbgJIXievz6zfy7+kYYqS3Ac3ERrTjmvh90gvW2y0U4PnYxQqT6z8wN8aDdYCBXmy\nHxvMgvzU9OVJ5p1adH8QAiJdoaKSuZTnmydpYZjqnhFJxYPArDNQfgNUtczrJVi6\nlA5mGGhoaXyD0wx4Ku1UjAtkKjCgaxUQ0VPcZfe4JVr3EfMm0TC6KtWBEhpT+Krx\n3lZAl67BAgMBAAECggEAK+yE174rvJchkbkz5W+UrN3bmQss7oFy2eRgLFc29Sg8\nPIDN85+EOCDxwZNSJdeDDG08V7TdlzeHSj4JDHDXUMmJRuLcfAJibOVHJBlQAqIp\n7+kquO7BY8tBcWabjJs5aO31T96dGjvfNrwcrILmVr9t5tT4eesgggVXcXYoQPd5\nOIf4/tRITI/9NcSuu58gPDuI3wGvgApIbkmiMiVSkJU7VNDWRNm6Ke0nTkbO4fcy\nc3BnWeg7F+mO5JMJWgWDtWP83XZi5ZoAJQI8XsuvqC7Cbc83lNP8kAsuz0/zRYp8\nVYc5QqKNLpkbYCSiu2Ct1p9NviekTYpbvlLROHpOXQKBgQDuxHrkkqaGs3wkIKRr\nBwGzcMzGOQwHuNqFXN+cEXGXEUMFw8Qirl7G6AVWoacePmaCOOD1cY4K/Majh8Uw\n4KMBaD+jrhyEOMiG4WH3lhtdJzWaJ0g/9TBhsZgo5OdeCN27UEUGm8wP74gfFCiI\nIi/QE2kzz30/iN1WljbjKWuo2wKBgQDA9daiBNCRrOgOEx9SqHPUM4eQy7YkXXcx\n2Nsr/wA6kYW7k3K6FspNtmUYwm1BFHqx15MM4SdrrRMpmzz/9+Kw9Ngtd8e1b1XU\nYIciNR+HChtWuYlyvSXVLdUHim+1EieDRNYi35T2eU4Gjb++Nj1DRwMeRO7wgl6T\n94zCsdX7kwKBgQChqH3cTD5bbSJcA43OuQu5xmGew/kVMV8idGMhc94IfjN2r7kY\nEh8xZN5YbVKM84rMGF6XT67wWXzUM5SbJzy2MzMDS1sbWqbKS8bcrtEQHP/5wybz\nxrpfKrLu3SyZSj92Fz7k3o8nKvJquGdI5Hyi0MGlxpHydmQFv+ahnuW5iQKBgEFq\nlqsyyqq4Xat33CSfqzUDizARf9xwO1qQ1CzkNGWmtBnVcQ2ZcFhMP5XXREbN9JKa\nLOYu5rhgYqC2WkXE+ftX5nnzo6bk6cooN2fnbprPWFlcaTaW3V6aPSBjVF+kmfSs\nv5PvDIdKtKMQJzMLHFXUm0AFyqOK7xlm0TeoJo01AoGANQept1k77oBS8koKUjh5\nSXFWonB/CSix9rgOXpNJ0Jj0fi2ZHMF9V/Os9mV5yK3hOcftOpBWYXXwShYKNF2L\nfHFP0H15CeO32OIPAUPYDjYWF/nx9Wab6LF70FM5/m2Ub0eGOj5dtldwFet5sbQM\nUInTmHO3vuLLr0DHF6Gjkx4=\n-----END PRIVATE KEY-----\n`;
+
+        function generate() {
+            const deviceHash = document.getElementById('deviceHash').value.trim();
+            if (!deviceHash) {
+                alert("Veuillez entrer le Device Hash");
+                return;
+            }
+
+            const expiryDate = document.getElementById('expiryDate').value;
+            
+            // Payload (Ordre des clés important pour la cohérence avec le backend Node.js)
+            const payload = {
+                customer_name: "Admin",
+                device_hash: deviceHash,
+                expiry_date: expiryDate,
+                features: ["pos", "products", "customers", "reports", "settings", "users", "backup"],
+                issue_date: new Date().toISOString().split('T')[0],
+                license_type: "full",
+                version_limit: "2.x"
+            };
+
+            const payloadStr = JSON.stringify(payload);
+            
+            // Signature RSA-SHA256
+            const sig = new KJUR.crypto.Signature({"alg": "SHA256withRSA"});
+            sig.init(PRIVATE_KEY);
+            sig.updateString(payloadStr);
+            const signatureHex = sig.sign();
+            
+            // Encodage en Base64
+            const signatureBase64 = hextob64(signatureHex);
+            const payloadBase64 = btoa(payloadStr); // btoa est standard dans les navigateurs (Latin1 -> Base64)
+            // Pour être sûr avec l'UTF-8 :
+            // const payloadBase64 = KJUR.text.b64utob64(KJUR.text.utf8tob64u(payloadStr)); 
+            // Mais btoa suffit souvent si pas de caractères spéciaux.
+            // On va utiliser une fct safe pour utf8
+            const payloadBase64Safe = window.btoa(unescape(encodeURIComponent(payloadStr)));
+
+            const licenseKey = payloadBase64Safe + '.' + signatureBase64;
+            
+            document.getElementById('licenseOutput').value = licenseKey;
+            document.getElementById('result').style.display = 'block';
+        }
+
+        function copy() {
+            const copyText = document.getElementById("licenseOutput");
+            copyText.select();
+            document.execCommand("copy"); // Fallback compatibilité
+            
+            if (navigator.clipboard) {
+                 navigator.clipboard.writeText(copyText.value);
+            }
+            alert("Clé copiée !");
+        }
+    </script>
+</body>
+</html>

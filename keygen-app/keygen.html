@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Générateur de Licence ULTRA_POS (AES)</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f7;
+            color: #333;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #27ae60;
+            /* Green for new system */
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d1d6;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+            font-family: monospace;
+        }
+
+        button {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #219150;
+        }
+
+        .result-area {
+            margin-top: 25px;
+            background: #f2f2f7;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 1px solid #d1d1d6;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 13px;
+            resize: none;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: #3498db;
+            margin-top: 0;
+        }
+
+        .copy-btn:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Générateur de Licence (v2.0.3)</h1>
+
+        <div class="form-group">
+            <label>Device Hash (Code Machine)</label>
+            <input type="text" id="deviceHash" placeholder="Collez le code ici..." autocomplete="off">
+        </div>
+
+        <button onclick="generate()">Générer la Clé</button>
+
+        <div id="result" class="result-area">
+            <label>Clé d'Activation (AES-256):</label>
+            <textarea id="licenseOutput" readonly></textarea>
+            <button class="copy-btn" onclick="copy()">Copier la clé</button>
+        </div>
+    </div>
+
+    <script>
+        // Require modules from current directory
+        // Since nodeIntegration is true in main.js, this works.
+        const { encryptLicense } = require('./license-crypto');
+        const { normalizeId } = require('./license-utils');
+
+        function generate() {
+            const rawInput = document.getElementById('deviceHash').value;
+
+            if (!rawInput || !rawInput.trim()) {
+                alert("Veuillez entrer le Device Hash");
+                return;
+            }
+
+            // 1. Normalize the input ID exactly like the app does
+            // This ensures that even if user copies with spaces or different case, it works.
+            const targetDeviceId = normalizeId(rawInput);
+
+            // 2. Encrypt the NORMALIZED ID
+            // The app will verify by checking: decrypt(token) === currentDeviceHash
+            const licenseKey = encryptLicense(targetDeviceId);
+
+            if (!licenseKey) {
+                alert("Erreur de génération (Encryption Failed)");
+                return;
+            }
+
+            document.getElementById('licenseOutput').value = licenseKey;
+            document.getElementById('result').style.display = 'block';
+        }
+
+        function copy() {
+            const copyText = document.getElementById("licenseOutput");
+            copyText.select();
+            document.execCommand("copy");
+            alert("Clé copiée !");
+        }
+    </script>
+</body>
+
+</html>

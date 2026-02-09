@@ -1,0 +1,61 @@
+# Distribution et Build
+dist/
+build/electron-builder-out/
+
+# Dépendances
+node_modules/
+.npm/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Fichiers temporaires et cache
+.cache/
+tmp/
+temp/
+*.tmp
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build artifacts
+*.dmg
+*.AppImage
+*.deb
+*.rpm
+*.snap
+*.exe
+*.zip
+*.gz
+
+# Base de données (garder template, ignorer instances)
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Sécurité - Ne jamais committer
+*.pfx
+*.p12
+*.pem
+*.key
+.env
+.env.local
+secrets/
+
+# OS generated
+.AppleDouble
+.LSOverride
+
+# Windows
+$RECYCLE.BIN/
