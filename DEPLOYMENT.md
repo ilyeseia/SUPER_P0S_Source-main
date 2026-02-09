@@ -4,6 +4,36 @@
 > Ce guide applique les principes de déploiement sécurisé pour des releases de production fiables.
 > **Apprenez à PENSER, pas à mémoriser des scripts.**
 
+## 🚀 Quick Start
+
+**Pour un déploiement rapide et guidé:**
+
+```powershell
+# 1. Vérification pré-déploiement
+.\scripts\pre-deploy-check.ps1
+
+# 2. Déploiement automatisé (5 phases)
+.\scripts\deploy.ps1
+
+# 3. En cas de problème
+.\scripts\rollback.ps1 -List
+.\scripts\emergency-diag.ps1 -Full
+```
+
+📋 **[Voir la Checklist de Déploiement](DEPLOYMENT_CHECKLIST.md)** - Version imprimable
+
+---
+
+## 📋 Nouveaux Scripts de Déploiement
+
+| Script | Description |
+|--------|-------------|
+| **pre-deploy-check.ps1** | Vérification pré-déploiement (4 catégories) |
+| **deploy.ps1** | Processus de déploiement guidé en 5 phases |
+| **post-deploy-verify.ps1** | Vérification post-déploiement automatisée |
+| **rollback.ps1** | Restauration rapide depuis backup |
+| **emergency-diag.ps1** | Diagnostics d'urgence du système |
+
 ## 📋 Table des Matières
 
 - [Prérequis](#prérequis)
