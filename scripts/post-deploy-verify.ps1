@@ -52,20 +52,22 @@ Write-Host "`n[2/5] Checking executable files..." -ForegroundColor White
 $exeFiles = Get-ChildItem "dist\*.exe" -ErrorAction SilentlyContinue
 
 if ($exeFiles) {
-    Write-Check "Found $($exeFiles.Count) executable(s)" "Success"
+    $count = $exeFiles.Count
+    Write-Check "Found $count executable(s)" "Success"
     
     foreach ($exe in $exeFiles) {
         $sizeMB = [math]::Round($exe.Length / 1MB, 2)
+        $name = $exe.Name
         
         # Check if file size is reasonable (should be >10MB for Electron app)
         if ($sizeMB -gt 10) {
-            Write-Check "✓ $($exe.Name) ($sizeMB MB)" "Success"
+            Write-Check "✓ $name ($sizeMB MB)" "Success"
         }
         elseif ($sizeMB -gt 1) {
-            Write-Check "⚠ $($exe.Name) ($sizeMB MB) - seems small" "Warning"
+            Write-Check "⚠ $name ($sizeMB MB) - seems small" "Warning"
         }
         else {
-            Write-Check "✗ $($exe.Name) ($sizeMB MB) - too small!" "Error"
+            Write-Check "✗ $name ($sizeMB MB) - too small!" "Error"
             $script:hasErrors = $true
         }
     }
@@ -90,7 +92,8 @@ $foundExpected = 0
 foreach ($pattern in $expectedPatterns) {
     $found = Get-ChildItem "dist\$pattern" -ErrorAction SilentlyContinue
     if ($found) {
-        Write-Check "Found: $($found.Name)" "Success"
+        $name = $found.Name
+        Write-Check "Found: $name" "Success"
         $foundExpected++
     }
     else {
@@ -162,7 +165,8 @@ else {
     Write-Host "`n📦 Build Artifacts:" -ForegroundColor White
     Get-ChildItem "dist\*.exe" | ForEach-Object {
         $sizeMB = [math]::Round($_.Length / 1MB, 2)
-        Write-Host "   - $($_.Name) ($sizeMB MB)" -ForegroundColor Gray
+        $name = $_.Name
+        Write-Host "   - $name ($sizeMB MB)" -ForegroundColor Gray
     }
     
     exit 0
