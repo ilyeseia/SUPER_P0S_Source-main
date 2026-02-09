@@ -33,15 +33,7 @@
     <span class="required">*</span>
   </label>
   <div class="input-group">
-    <input 
-      type="number" 
-      id="product-unit-price" 
-      class="form-control" 
-      step="0.01" 
-      min="0" 
-      placeholder="0.00"
-      required
-    >
+    <input type="number" id="product-unit-price" class="form-control" step="0.01" min="0" placeholder="0.00" required>
     <div class="input-group-append">
       <span class="input-group-text" id="unit-price-label">ر.س/قطعة</span>
     </div>
@@ -58,12 +50,12 @@
 <script>
   // Add this script in index.html or renderer.js
   // Updates the unit price label when unit type changes
-  
+
   const unitTypeSelect = document.getElementById('product-unit-type');
   const unitPriceLabel = document.getElementById('unit-price-label');
 
   if (unitTypeSelect && unitPriceLabel) {
-    unitTypeSelect.addEventListener('change', function() {
+    unitTypeSelect.addEventListener('change', function () {
       const unitType = this.value;
       if (unitType === 'weight') {
         unitPriceLabel.textContent = 'ر.س/كيلو';
@@ -91,7 +83,7 @@
       ${product.unit_type === 'weight' ? '⚖️ وزن' : '📦 وحدة'}
     </span>
   </div>
-  
+
   <div class="product-body">
     <p class="product-price">
       <!-- Display unit price with appropriate label -->
@@ -100,15 +92,15 @@
         ${product.unit_type === 'weight' ? 'ر.س/كيلو' : 'ر.س/قطعة'}
       </span>
     </p>
-    
+
     <p class="product-stock">
       المخزون: ${product.stock}
       ${product.unit_type === 'weight' ? 'كيلو' : 'قطعة'}
     </p>
   </div>
-  
+
   <div class="product-actions">
-    <button class="btn btn-success btn-sm" onclick="addToCart(${product.id})">
+    <button class="btn btn-success btn-sm" onclick="addToCart(/* ${product.id} */ productId)">
       <i class="fas fa-cart-plus"></i> إضافة للسلة
     </button>
   </div>
@@ -126,15 +118,9 @@
 
 <div class="cart-item-quantity">
   <label>الكمية:</label>
-  <input 
-    type="number" 
-    id="quantity-${product.id}"
-    class="form-control quantity-input"
-    step="${product.unit_type === 'weight' ? '0.01' : '1'}"
-    min="${product.unit_type === 'weight' ? '0.01' : '1'}"
-    value="1"
-    placeholder="${product.unit_type === 'weight' ? 'مثال: 1.5 كيلو' : 'مثال: 5 قطع'}"
-  >
+  <input type="number" id="quantity-${product.id}" class="form-control quantity-input"
+    step="${product.unit_type === 'weight' ? '0.01' : '1'}" min="${product.unit_type === 'weight' ? '0.01' : '1'}"
+    value="1" placeholder="${product.unit_type === 'weight' ? 'مثال: 1.5 كيلو' : 'مثال: 5 قطع'}">
   <span class="quantity-unit">
     ${product.unit_type === 'weight' ? 'كيلو' : 'قطعة'}
   </span>
@@ -146,7 +132,7 @@
 
 <style>
   /* Add these styles to styles.css or in a <style> tag */
-  
+
   .badge-unit-type {
     display: inline-flex;
     align-items: center;
@@ -167,11 +153,13 @@
   }
 
   .quantity-input[step="0.01"] {
-    border-left: 3px solid #17a2b8; /* Blue border for weight products */
+    border-left: 3px solid #17a2b8;
+    /* Blue border for weight products */
   }
 
   .quantity-input[step="1"] {
-    border-left: 3px solid #007bff; /* Teal border for unit products */
+    border-left: 3px solid #007bff;
+    /* Teal border for unit products */
   }
 
   .price-unit {
