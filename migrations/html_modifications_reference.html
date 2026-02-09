@@ -1,0 +1,193 @@
+<!--
+  HTML Form Reference - index.html modifications
+  
+  Add these form fields to the product add/edit form in index.html
+  Look for the product form section (likely has id="product-form" or similar)
+-->
+
+<!-- ======================================================================== -->
+<!-- Add these fields to the Product Form -->
+<!-- ======================================================================== -->
+
+<!-- نوع البيع (Unit Type) Field -->
+<div class="form-group">
+  <label for="product-unit-type" class="form-label">
+    <i class="fas fa-balance-scale"></i>
+    نوع البيع
+    <span class="required">*</span>
+  </label>
+  <select id="product-unit-type" class="form-control" required>
+    <option value="unit" selected>وحدة (قطعة)</option>
+    <option value="weight">وزن (كيلو/جرام)</option>
+  </select>
+  <small class="form-text text-muted">
+    اختر نوع البيع: بالقطعة أو بالوزن
+  </small>
+</div>
+
+<!-- سعر الوحدة (Unit Price) Field -->
+<div class="form-group">
+  <label for="product-unit-price" class="form-label">
+    <i class="fas fa-tag"></i>
+    سعر الوحدة
+    <span class="required">*</span>
+  </label>
+  <div class="input-group">
+    <input 
+      type="number" 
+      id="product-unit-price" 
+      class="form-control" 
+      step="0.01" 
+      min="0" 
+      placeholder="0.00"
+      required
+    >
+    <div class="input-group-append">
+      <span class="input-group-text" id="unit-price-label">ر.س/قطعة</span>
+    </div>
+  </div>
+  <small class="form-text text-muted">
+    السعر لكل وحدة أو كيلو حسب نوع البيع
+  </small>
+</div>
+
+<!-- ======================================================================== -->
+<!-- JavaScript to update unit label based on unit type selection -->
+<!-- ======================================================================== -->
+
+<script>
+  // Add this script in index.html or renderer.js
+  // Updates the unit price label when unit type changes
+  
+  const unitTypeSelect = document.getElementById('product-unit-type');
+  const unitPriceLabel = document.getElementById('unit-price-label');
+
+  if (unitTypeSelect && unitPriceLabel) {
+    unitTypeSelect.addEventListener('change', function() {
+      const unitType = this.value;
+      if (unitType === 'weight') {
+        unitPriceLabel.textContent = 'ر.س/كيلو';
+      } else {
+        unitPriceLabel.textContent = 'ر.س/قطعة';
+      }
+    });
+  }
+</script>
+
+<!-- ======================================================================== -->
+<!-- Product Display in List/Grid View -->
+<!-- ======================================================================== -->
+
+<!-- 
+  When displaying products in a list or grid, add unit type badge
+  Example product card structure:
+-->
+
+<div class="product-card" data-product-id="${product.id}">
+  <div class="product-header">
+    <h5 class="product-name">${product.name}</h5>
+    <!-- Unit Type Badge -->
+    <span class="badge badge-${product.unit_type === 'weight' ? 'info' : 'primary'}">
+      ${product.unit_type === 'weight' ? '⚖️ وزن' : '📦 وحدة'}
+    </span>
+  </div>
+  
+  <div class="product-body">
+    <p class="product-price">
+      <!-- Display unit price with appropriate label -->
+      <span class="price-value">${product.unit_price.toFixed(2)}</span>
+      <span class="price-unit">
+        ${product.unit_type === 'weight' ? 'ر.س/كيلو' : 'ر.س/قطعة'}
+      </span>
+    </p>
+    
+    <p class="product-stock">
+      المخزون: ${product.stock}
+      ${product.unit_type === 'weight' ? 'كيلو' : 'قطعة'}
+    </p>
+  </div>
+  
+  <div class="product-actions">
+    <button class="btn btn-success btn-sm" onclick="addToCart(${product.id})">
+      <i class="fas fa-cart-plus"></i> إضافة للسلة
+    </button>
+  </div>
+</div>
+
+<!-- ======================================================================== -->
+<!-- Sales Cart - Quantity Input -->
+<!-- ======================================================================== -->
+
+<!--
+  When adding product to cart, the quantity input should support:
+  - Integer values for unit-based products
+  - Decimal values for weight-based products
+-->
+
+<div class="cart-item-quantity">
+  <label>الكمية:</label>
+  <input 
+    type="number" 
+    id="quantity-${product.id}"
+    class="form-control quantity-input"
+    step="${product.unit_type === 'weight' ? '0.01' : '1'}"
+    min="${product.unit_type === 'weight' ? '0.01' : '1'}"
+    value="1"
+    placeholder="${product.unit_type === 'weight' ? 'مثال: 1.5 كيلو' : 'مثال: 5 قطع'}"
+  >
+  <span class="quantity-unit">
+    ${product.unit_type === 'weight' ? 'كيلو' : 'قطعة'}
+  </span>
+</div>
+
+<!-- ======================================================================== -->
+<!-- Optional: CSS Styles for Unit Type Badge -->
+<!-- ======================================================================== -->
+
+<style>
+  /* Add these styles to styles.css or in a <style> tag */
+  
+  .badge-unit-type {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 12px;
+  }
+
+  .badge-unit-type.weight {
+    background-color: #17a2b8;
+    color: white;
+  }
+
+  .badge-unit-type.unit {
+    background-color: #007bff;
+    color: white;
+  }
+
+  .quantity-input[step="0.01"] {
+    border-left: 3px solid #17a2b8; /* Blue border for weight products */
+  }
+
+  .quantity-input[step="1"] {
+    border-left: 3px solid #007bff; /* Teal border for unit products */
+  }
+
+  .price-unit {
+    font-size: 0.85em;
+    color: #6c757d;
+    margin-right: 4px;
+  }
+</style>
+
+<!-- ======================================================================== -->
+<!-- Location in index.html -->
+<!-- ======================================================================== -->
+
+<!--
+  1. Find the product add/edit form section
+  2. Insert the new form fields after the existing price/cost fields
+  3. Update product display templates to show unit type and unit price
+  4. Update cart quantity inputs to support decimal values for weight products
+-->
