@@ -1,6 +1,6 @@
 # ULTRA_POS Guided Deployment Script
 # Implements the 5-Phase Deployment Process:
-# 1. PREPARE → 2. BACKUP → 3. DEPLOY → 4. VERIFY → 5. CONFIRM/ROLLBACK
+# 1. PREPARE -> 2. BACKUP -> 3. DEPLOY -> 4. VERIFY -> 5. CONFIRM/ROLLBACK
 
 param(
     [switch]$DryRun,
@@ -12,9 +12,9 @@ $ErrorActionPreference = "Stop"
 
 function Write-Phase {
     param($Number, $Name, $Color = "Cyan")
-    Write-Host "`n" ("═" * 60) -ForegroundColor $Color
+    Write-Host "`n" ("=" * 60) -ForegroundColor $Color
     Write-Host "  PHASE ${Number}: $Name" -ForegroundColor $Color
-    Write-Host ("═" * 60) -ForegroundColor $Color
+    Write-Host ("=" * 60) -ForegroundColor $Color
 }
 
 function Write-Step {
@@ -26,31 +26,31 @@ function Write-Step {
         "Info"    = "White"
     }
     $icons = @{
-        "Success" = "✅"
-        "Error"   = "❌"
-        "Warning" = "⚠️ "
-        "Info"    = "📋"
+        "Success" = "[OK] "
+        "Error"   = "[X]  "
+        "Warning" = "[!]  "
+        "Info"    = "[*]  "
     }
     Write-Host "  $($icons[$Type]) $Message" -ForegroundColor $colors[$Type]
 }
 
 function Confirm-Action {
     param($Prompt)
-    $response = Read-Host "  ❓ $Prompt (y/n)"
+    $response = Read-Host "  [?] $Prompt (y/n)"
     return $response -eq 'y' -or $response -eq 'Y'
 }
 
-Write-Host "`n" ("═" * 60) -ForegroundColor Magenta
+Write-Host "`n" ("=" * 60) -ForegroundColor Magenta
 Write-Host "          ULTRA_POS DEPLOYMENT SYSTEM" -ForegroundColor Magenta
-Write-Host ("═" * 60) -ForegroundColor Magenta
+Write-Host ("=" * 60) -ForegroundColor Magenta
 
 if ($DryRun) {
-    Write-Host "`n⚠️  DRY RUN MODE - No changes will be made`n" -ForegroundColor Yellow
+    Write-Host "`n[!] DRY RUN MODE - No changes will be made`n" -ForegroundColor Yellow
 }
 
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 # PHASE 1: PREPARE
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 
 Write-Phase 1 "PREPARE" "Cyan"
 Write-Step "Verifying prerequisites and code quality" "Info"
@@ -89,9 +89,9 @@ if (-not $DryRun) {
     }
 }
 
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 # PHASE 2: BACKUP
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 
 Write-Phase 2 "BACKUP" "Yellow"
 Write-Step "Creating backup of current state" "Info"
@@ -133,12 +133,12 @@ if (-not $SkipBackup) {
     }
 }
 else {
-    Write-Step "⚠️  BACKUP SKIPPED - Rollback may not be possible!" "Warning"
+    Write-Step "[!] BACKUP SKIPPED - Rollback may not be possible!" "Warning"
 }
 
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 # PHASE 3: DEPLOY
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 
 Write-Phase 3 "DEPLOY" "Magenta"
 Write-Step "Executing build process" "Info"
@@ -168,9 +168,9 @@ else {
     Write-Step "[DRY RUN] Would execute: npm run build" "Warning"
 }
 
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 # PHASE 4: VERIFY
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 
 Write-Phase 4 "VERIFY" "Cyan"
 Write-Step "Verifying deployment output" "Info"
@@ -217,19 +217,19 @@ if (-not $SkipVerification) {
     }
 }
 else {
-    Write-Step "⚠️  VERIFICATION SKIPPED" "Warning"
+    Write-Step "[!] VERIFICATION SKIPPED" "Warning"
     $verifySuccess = $true
 }
 
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 # PHASE 5: CONFIRM or ROLLBACK
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 
 Write-Phase 5 "CONFIRM or ROLLBACK" "Green"
 
 if (-not $DryRun) {
     if ($verifySuccess) {
-        Write-Step "Deployment verification passed ✓" "Success"
+        Write-Step "Deployment verification passed [OK]" "Success"
         Write-Host ""
         Write-Step "Next Steps:" "Info"
         Write-Step "  1. Test the installer: dist\ULTRA_POS-*-Setup.exe" "Info"
@@ -237,18 +237,18 @@ if (-not $DryRun) {
         Write-Step "  3. If issues found, run: .\scripts\rollback.ps1" "Info"
         Write-Host ""
         
-        Write-Host "  📊 DEPLOYMENT SUMMARY" -ForegroundColor White
-        Write-Host "  ─────────────────────────────────────" -ForegroundColor Gray
+        Write-Host "  DEPLOYMENT SUMMARY" -ForegroundColor White
+        Write-Host "  -------------------------------------" -ForegroundColor Gray
         Write-Host "  Version:  v$version" -ForegroundColor Gray
         Write-Host "  Date:     $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor Gray
         Write-Host "  Output:   dist/" -ForegroundColor Gray
         if (-not $SkipBackup) {
             Write-Host "  Backup:   backup/v$version-$timestamp" -ForegroundColor Gray
         }
-        Write-Host "  ─────────────────────────────────────" -ForegroundColor Gray
+        Write-Host "  -------------------------------------" -ForegroundColor Gray
         Write-Host ""
         
-        Write-Step "✅ DEPLOYMENT SUCCESSFUL!" "Success"
+        Write-Step "DEPLOYMENT SUCCESSFUL!" "Success"
         exit 0
     }
     else {

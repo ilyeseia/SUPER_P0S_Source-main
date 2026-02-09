@@ -1,6 +1,6 @@
 # Pre-Deployment Verification Script
 # Implements the 4 Verification Categories from deployment-procedures
-# ✅ Code Quality | ✅ Build | ✅ Environment | ✅ Safety
+# [OK] Code Quality | [OK] Build | [OK] Environment | [OK] Safety
 
 param(
     [switch]$WhatIf
@@ -22,7 +22,7 @@ function Write-Check {
 
 function Test-Requirement {
     param($Name, $TestBlock)
-    Write-Host "`n📋 Checking: $Name" -ForegroundColor White
+    Write-Host "`n[*] Checking: $Name" -ForegroundColor White
     try {
         & $TestBlock
     }
@@ -32,19 +32,19 @@ function Test-Requirement {
     }
 }
 
-Write-Host "═══════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "===================================================" -ForegroundColor Cyan
 Write-Host "  ULTRA_POS Pre-Deployment Verification" -ForegroundColor Cyan
-Write-Host "═══════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "===================================================" -ForegroundColor Cyan
 
 if ($WhatIf) {
-    Write-Host "`n⚠️  Running in DRY RUN mode - no changes will be made`n" -ForegroundColor Yellow
+    Write-Host "`n[!] Running in DRY RUN mode - no changes will be made`n" -ForegroundColor Yellow
 }
 
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 # CATEGORY 1: CODE QUALITY
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 
-Write-Host "`n═══ CATEGORY 1: CODE QUALITY ═══" -ForegroundColor Cyan
+Write-Host "`n=== CATEGORY 1: CODE QUALITY ===" -ForegroundColor Cyan
 
 Test-Requirement "Git Status Clean" {
     $gitStatus = git status --porcelain 2>$null
@@ -69,16 +69,17 @@ Test-Requirement "Package.json Exists" {
     }
 }
 
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 # CATEGORY 2: BUILD PREREQUISITES
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 
-Write-Host "`n═══ CATEGORY 2: BUILD PREREQUISITES ═══" -ForegroundColor Cyan
+Write-Host "`n=== CATEGORY 2: BUILD PREREQUISITES ===" -ForegroundColor Cyan
 
 Test-Requirement "Node.js Version" {
     $nodeVersion = node --version 2>$null
     if ($nodeVersion) {
-        $versionNum = [version]($nodeVersion -replace 'v', '')
+        $versionStr = $nodeVersion -replace 'v', ''
+        $versionNum = [version]$versionStr
         if ($versionNum.Major -ge 16) {
             Write-Check "Node.js $nodeVersion" "Success"
         }
@@ -126,11 +127,11 @@ Test-Requirement "Electron Builder Available" {
     }
 }
 
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 # CATEGORY 3: ENVIRONMENT
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 
-Write-Host "`n═══ CATEGORY 3: ENVIRONMENT ═══" -ForegroundColor Cyan
+Write-Host "`n=== CATEGORY 3: ENVIRONMENT ===" -ForegroundColor Cyan
 
 Test-Requirement "Build Configuration" {
     if (Test-Path "electron-builder.json") {
@@ -163,14 +164,14 @@ Test-Requirement "Disk Space" {
     }
 }
 
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 # CATEGORY 4: SAFETY
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 
-Write-Host "`n═══ CATEGORY 4: SAFETY ═══" -ForegroundColor Cyan
+Write-Host "`n=== CATEGORY 4: SAFETY ===" -ForegroundColor Cyan
 
 Test-Requirement "Backup Reminder" {
-    Write-Check "⚠️  Have you backed up the current version?" "Warning"
+    Write-Check "[!] Have you backed up the current version?" "Warning"
     Write-Check "Recommended: Copy current dist/ to backup/" "Info"
     
     if (Test-Path "dist") {
@@ -191,20 +192,20 @@ Test-Requirement "Version Check" {
     }
 }
 
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 # SUMMARY
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 
-Write-Host "`n═══════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "`n===================================================" -ForegroundColor Cyan
 
 if ($script:hasErrors) {
-    Write-Host "`n❌ PRE-DEPLOYMENT CHECK FAILED" -ForegroundColor Red
+    Write-Host "`n[X] PRE-DEPLOYMENT CHECK FAILED" -ForegroundColor Red
     Write-Host "   Fix the errors above before deploying" -ForegroundColor Red
     exit 1
 }
 else {
-    Write-Host "`n✅ PRE-DEPLOYMENT CHECK PASSED" -ForegroundColor Green
-    Write-Host "`n📋 Next Steps:" -ForegroundColor White
+    Write-Host "`n[OK] PRE-DEPLOYMENT CHECK PASSED" -ForegroundColor Green
+    Write-Host "`n[*] Next Steps:" -ForegroundColor White
     Write-Host "   1. Create backup: Copy dist/ to backup/" -ForegroundColor Gray
     Write-Host "   2. Run deployment: .\scripts\deploy.ps1" -ForegroundColor Gray
     Write-Host "   3. Or build manually: npm run build" -ForegroundColor Gray
