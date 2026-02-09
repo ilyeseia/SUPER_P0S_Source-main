@@ -14,16 +14,16 @@ function Write-Info {
     Write-Host "  $Message" -ForegroundColor $Color
 }
 
-Write-Host "`n═══════════════════════════════════════════════════" -ForegroundColor Red
+Write-Host "`n===================================================" -ForegroundColor Red
 Write-Host "  ULTRA_POS ROLLBACK UTILITY" -ForegroundColor Red
-Write-Host "═══════════════════════════════════════════════════" -ForegroundColor Red
+Write-Host "===================================================" -ForegroundColor Red
 
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 # LIST MODE: Show available backups
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 
 if ($List) {
-    Write-Host "`n📂 Available Backups:" -ForegroundColor Cyan
+    Write-Host "`n[*] Available Backups:" -ForegroundColor Cyan
     
     if (Test-Path "backup") {
         $backups = Get-ChildItem "backup" -Directory | Sort-Object Name -Descending
@@ -46,7 +46,7 @@ if ($List) {
                 Write-Info "$name ($count files, $sizeMB MB)" "Gray"
             }
             
-            Write-Host "`n💡 To restore a backup, run:" -ForegroundColor Yellow
+            Write-Host "`n[?] To restore a backup, run:" -ForegroundColor Yellow
             Write-Host "   .\scripts\rollback.ps1 -BackupPath 'backup\[folder-name]'" -ForegroundColor Gray
         }
         else {
@@ -61,39 +61,39 @@ if ($List) {
     exit 0
 }
 
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 # ROLLBACK MODE: Restore from backup
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 
 if (-not $BackupPath) {
-    Write-Host "`n ❌ Error: No backup path specified" -ForegroundColor Red
-    Write-Host "`n📋 Usage:" -ForegroundColor White
+    Write-Host "`n [X] Error: No backup path specified" -ForegroundColor Red
+    Write-Host "`n[*] Usage:" -ForegroundColor White
     Write-Host "   List backups:    .\scripts\rollback.ps1 -List" -ForegroundColor Gray
     Write-Host "   Restore backup:  .\scripts\rollback.ps1 -BackupPath 'backup\v2.0.0-20260209-123456'" -ForegroundColor Gray
     exit 1
 }
 
 if (-not (Test-Path $BackupPath)) {
-    Write-Host "`n❌ Error: Backup path not found: $BackupPath" -ForegroundColor Red
+    Write-Host "`n[X] Error: Backup path not found: $BackupPath" -ForegroundColor Red
     Write-Host "`nRun with -List to see available backups" -ForegroundColor Yellow
     exit 1
 }
 
-Write-Host "`n⚠️  WARNING: ROLLBACK OPERATION" -ForegroundColor Yellow
+Write-Host "`n[!] WARNING: ROLLBACK OPERATION" -ForegroundColor Yellow
 Write-Host "`nThis will:" -ForegroundColor White
 Write-Host "  - Delete current dist/ folder" -ForegroundColor Gray
 Write-Host "  - Restore files from: $BackupPath" -ForegroundColor Gray
 Write-Host "  - Optionally restore user data" -ForegroundColor Gray
 
 if (-not $Force) {
-    $confirm = Read-Host "`n❓ Continue with rollback? (yes/no)"
+    $confirm = Read-Host "`n[?] Continue with rollback? (yes/no)"
     if ($confirm -ne "yes") {
-        Write-Host "`n⛔ Rollback cancelled" -ForegroundColor Yellow
+        Write-Host "`n[!] Rollback cancelled" -ForegroundColor Yellow
         exit 0
     }
 }
 
-Write-Host "`n🔄 Starting rollback process..." -ForegroundColor Cyan
+Write-Host "`n[*] Starting rollback process..." -ForegroundColor Cyan
 
 # Step 1: Backup current state (just in case)
 $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
@@ -103,14 +103,14 @@ if (Test-Path "dist") {
     Write-Info "Creating emergency backup of current dist/..." "Cyan"
     New-Item -ItemType Directory -Path $emergencyBackup -Force | Out-Null
     Copy-Item "dist\*" -Destination $emergencyBackup -Recurse -Force
-    Write-Info "✓ Emergency backup created at: $emergencyBackup" "Green"
+    Write-Info "[OK] Emergency backup created at: $emergencyBackup" "Green"
 }
 
 # Step 2: Remove current dist
 if (Test-Path "dist") {
     Write-Info "Removing current dist/ folder..." "Cyan"
     Remove-Item "dist" -Recurse -Force
-    Write-Info "✓ Current dist/ removed" "Green"
+    Write-Info "[OK] Current dist/ removed" "Green"
 }
 
 # Step 3: Restore dist from backup
@@ -120,15 +120,15 @@ New-Item -ItemType Directory -Path "dist" -Force | Out-Null
 $backupFiles = Get-ChildItem $BackupPath -File "*.exe" -ErrorAction SilentlyContinue
 if ($backupFiles) {
     Copy-Item "$BackupPath\*.exe" -Destination "dist\" -Force
-    Write-Info "✓ Restored $($backupFiles.Count) executable(s)" "Green"
+    Write-Info "[OK] Restored $($backupFiles.Count) executable(s)" "Green"
 }
 else {
-    Write-Info "⚠ No executables found in backup" "Yellow"
+    Write-Info "[!] No executables found in backup" "Yellow"
 }
 
 # Step 4: Ask about user data restoration
 if (Test-Path "$BackupPath\appdata") {
-    $restoreData = Read-Host "`n❓ Also restore user data (database, license)? (y/n)"
+    $restoreData = Read-Host "`n[?] Also restore user data (database, license)? (y/n)"
     
     if ($restoreData -eq 'y' -or $restoreData -eq 'Y') {
         $appData = "$env:APPDATA\ULTRA_POS Cashier System"
@@ -138,27 +138,27 @@ if (Test-Path "$BackupPath\appdata") {
             $userDataBackup = "$emergencyBackup\appdata"
             New-Item -ItemType Directory -Path $userDataBackup -Force | Out-Null
             Copy-Item "$appData\*" -Destination $userDataBackup -Force -ErrorAction SilentlyContinue
-            Write-Info "✓ Current user data backed up" "Green"
+            Write-Info "[OK] Current user data backed up" "Green"
         }
         
         # Restore user data
         Copy-Item "$BackupPath\appdata\*" -Destination $appData -Force -ErrorAction SilentlyContinue
-        Write-Info "✓ User data restored" "Green"
+        Write-Info "[OK] User data restored" "Green"
     }
 }
 
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 # SUMMARY
-# ═══════════════════════════════════════════════════════════
+# =================================================================
 
-Write-Host "`n═══════════════════════════════════════════════════" -ForegroundColor Green
-Write-Host "`n✅ ROLLBACK COMPLETE!" -ForegroundColor Green
+Write-Host "`n===================================================" -ForegroundColor Green
+Write-Host "`n[OK] ROLLBACK COMPLETE!" -ForegroundColor Green
 
-Write-Host "`n📊 Summary:" -ForegroundColor White
+Write-Host "`nSummary:" -ForegroundColor White
 Write-Host "  Restored from:    $BackupPath" -ForegroundColor Gray
 Write-Host "  Emergency backup: $emergencyBackup" -ForegroundColor Gray
 
-Write-Host "`n📋 Next Steps:" -ForegroundColor White
+Write-Host "`nNext Steps:" -ForegroundColor White
 Write-Host "  1. Test the restored version" -ForegroundColor Gray
 Write-Host "  2. Verify functionality works" -ForegroundColor Gray
 Write-Host "  3. Investigation: Why did deployment fail?" -ForegroundColor Gray
