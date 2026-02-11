@@ -9,6 +9,22 @@
  */
 
 const { describe, test, expect, beforeEach } = require('@jest/globals');
+const {
+    validateUnitType,
+    validateUnitPrice,
+    validateProductData,
+    normalizeProductData,
+    formatProductPrice,
+    getUnitLabel,
+    getUnitIcon,
+    validateQuantity,
+    calculateItemTotal,
+    calculateCartTotal,
+    handleProductsCreate,
+    handleProductsUpdate,
+    handleProductsSearch,
+    migrateProduct
+} = require('../../src/utils/product-unit-type');
 
 // ============================================
 // 1. TESTS DE VALIDATION DES DONNÉES
