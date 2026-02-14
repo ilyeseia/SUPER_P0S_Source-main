@@ -1,0 +1,125 @@
+# =====================================================
+# ULTRA_POS Cashier System - Docker Compose Configuration
+# Development Environment Setup
+# =====================================================
+
+version: '3.8'
+
+services:
+  # Main build service
+  ultra-pos-builder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    container_name: ultra-pos-builder
+    volumes:
+      # Mount source code for development
+      - ./src:/app/src:ro
+      # Persist node_modules
+      - node_modules:/app/node_modules
+      # Output directory for built artifacts
+      - ./dist:/app/dist
+      # Cache directories for faster builds
+      - electron_cache:/root/.cache/electron
+      - electron_builder_cache:/root/.cache/electron-builder
+    environment:
+      - NODE_ENV=development
+      - npm_config_cache=/root/.npm-cache
+    command: npm run build:win64
+
+  # Development environment for testing
+  ultra-pos-dev:
+    image: node:18-bullseye
+    container_name: ultra-pos-dev
+    working_dir: /app
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DISPLAY=${DISPLAY:-:0}
+    command: npm install && npm run dev
+    depends_on:
+      - ultra-pos-builder
+    stdin_open: true
+    tty: true
+
+  # Testing service
+  ultra-pos-test:
+    image: node:18-bullseye
+    container_name: ultra-pos-test
+    working_dir: /app
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    environment:
+      - NODE_ENV=test
+    command: npm test
+    depends_on:
+      - ultra-pos-builder
+
+  # SQLite database backup service
+  db-backup:
+    image: alpine:latest
+    container_name: ultra-pos-backup
+    volumes:
+      - ./backup:/backup
+      - db_data:/data
+    environment:
+      - BACKUP_INTERVAL=${BACKUP_INTERVAL:-3600}
+    command: >
+      sh -c "
+        echo 'Starting backup service...'
+        while true; do
+          timestamp=$$(date +%Y%m%d-%H%M%S)
+          if [ -f /data/database.db ]; then
+            cp /data/database.db /backup/database-$$timestamp.db
+            echo \"Backup created: database-$$timestamp.db\"
+          fi
+          sleep $$BACKUP_INTERVAL
+        done
+      "
+
+volumes:
+  # Persist node_modules across container restarts
+  node_modules:
+    driver: local
+  # Electron cache for faster builds
+  electron_cache:
+    driver: local
+  electron_builder_cache:
+    driver: local
+  # Database data persistence
+  db_data:
+    driver: local
+
+networks:
+  default:
+    name: ultra-pos-network
+    driver: bridge
+
+# =====================================================
+# Usage Instructions:
+#
+# Start development environment:
+#   docker-compose up -d ultra-pos-dev
+#
+# Run tests:
+#   docker-compose run ultra-pos-test
+#
+# Build the application:
+#   docker-compose run ultra-pos-builder
+#
+# View logs:
+#   docker-compose logs -f ultra-pos-builder
+#
+# Stop all services:
+#   docker-compose down
+#
+# Clean up everything:
+#   docker-compose down -v --rmi all
+#
+# Rebuild containers:
+#   docker-compose build --no-cache
+# =====================================================

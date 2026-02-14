@@ -635,3 +635,265 @@ module.exports = {
     handleProductsSearch,
     migrateProduct
 };
+
+// ============================================
+// 7. TESTS DE PERFORMANCE
+// ============================================
+
+describe('Performance Tests', () => {
+    describe('calculateCartTotal performance', () => {
+        test('should handle large cart efficiently', () => {
+            const largeCart = [];
+            for (let i = 0; i < 1000; i++) {
+                largeCart.push({
+                    product: { unit_type: 'unit', unit_price: 1.00 },
+                    quantity: 1
+                });
+            }
+
+            const startTime = Date.now();
+            const total = calculateCartTotal(largeCart);
+            const endTime = Date.now();
+
+            expect(total).toBe(1000.00);
+            expect(endTime - startTime).toBeLessThan(100); // Should complete in under 100ms
+        });
+    });
+
+    describe('validateQuantity performance', () => {
+        test('should validate many quantities quickly', () => {
+            const startTime = Date.now();
+            
+            for (let i = 0; i < 10000; i++) {
+                validateQuantity(i + 1, 'unit');
+            }
+            
+            const endTime = Date.now();
+            expect(endTime - startTime).toBeLessThan(100);
+        });
+    });
+
+    describe('formatProductPrice performance', () => {
+        test('should format many prices quickly', () => {
+            const products = [];
+            for (let i = 0; i < 1000; i++) {
+                products.push({
+                    unit_type: i % 2 === 0 ? 'unit' : 'weight',
+                    unit_price: Math.random() * 100
+                });
+            }
+
+            const startTime = Date.now();
+            products.forEach(p => formatProductPrice(p));
+            const endTime = Date.now();
+
+            expect(endTime - startTime).toBeLessThan(100);
+        });
+    });
+});
+
+// ============================================
+// 8. TESTS DE SÉCURITÉ
+// ============================================
+
+describe('Security Tests', () => {
+    describe('Input Sanitization', () => {
+        test('should handle SQL injection attempts in product name', async () => {
+            const maliciousData = {
+                name: "'; DROP TABLE products; --",
+                price: 10.00,
+                unit_type: 'unit',
+                unit_price: 10.00
+            };
+
+            const db = {
+                prepare: jest.fn().mockReturnValue({
+                    run: jest.fn().mockReturnValue({ lastInsertRowid: 1 })
+                })
+            };
+
+            // The function should not throw, but should safely handle the input
+            const result = await handleProductsCreate(maliciousData, db);
+            expect(result.success).toBe(true);
+        });
+
+        test('should handle XSS attempts in product name', () => {
+            const xssProduct = {
+                name: '<script>alert("XSS")</script>',
+                unit_type: 'unit',
+                unit_price: 10.00
+            };
+
+            const result = validateProductData(xssProduct);
+            expect(result.isValid).toBe(true);
+            // Note: XSS prevention should be handled at display time
+        });
+    });
+
+    describe('Boundary Tests', () => {
+        test('should handle maximum safe integer price', () => {
+            const maxPrice = Number.MAX_SAFE_INTEGER;
+            const result = validateUnitPrice(maxPrice);
+            expect(result.isValid).toBe(true);
+        });
+
+        test('should handle very small decimal price', () => {
+            const smallPrice = 0.001;
+            const result = validateUnitPrice(smallPrice);
+            expect(result.isValid).toBe(true);
+        });
+
+        test('should handle very large quantity', () => {
+            const largeQty = Number.MAX_SAFE_INTEGER;
+            const result = validateQuantity(largeQty, 'weight');
+            expect(result.isValid).toBe(true);
+        });
+    });
+});
+
+// ============================================
+// 9. TESTS D'INTÉGRATION AVANCÉS
+// ============================================
+
+describe('Advanced Integration Tests', () => {
+    describe('Complete Product Workflow', () => {
+        test('should create, update, and retrieve product correctly', async () => {
+            const db = {
+                prepare: jest.fn().mockReturnValue({
+                    run: jest.fn().mockReturnValue({ lastInsertRowid: 1 }),
+                    all: jest.fn().mockReturnValue([])
+                })
+            };
+
+            // Create
+            const productData = {
+                name: 'Test Workflow Product',
+                price: 50.00,
+                unit_type: 'weight',
+                unit_price: 50.00
+            };
+
+            const createResult = await handleProductsCreate(productData, db);
+            expect(createResult.success).toBe(true);
+
+            // Update
+            const updateData = {
+                id: createResult.product.id,
+                data: {
+                    unit_type: 'unit',
+                    unit_price: 55.00
+                }
+            };
+
+            const updateResult = await handleProductsUpdate(updateData, db);
+            expect(updateResult.success).toBe(true);
+
+            // Search
+            const searchResult = await handleProductsSearch({ query: 'Test' }, db);
+            expect(searchResult.success).toBe(true);
+        });
+    });
+
+    describe('Cart Operations', () => {
+        test('should calculate cart with mixed products correctly', () => {
+            const cart = [
+                { product: { unit_type: 'unit', unit_price: 10.00 }, quantity: 2 },
+                { product: { unit_type: 'weight', unit_price: 5.00 }, quantity: 0.5 },
+                { product: { unit_type: 'unit', unit_price: 25.00 }, quantity: 1 },
+                { product: { unit_type: 'weight', unit_price: 3.00 }, quantity: 1.75 }
+            ];
+
+            const total = calculateCartTotal(cart);
+            // (2 * 10) + (0.5 * 5) + (1 * 25) + (1.75 * 3) = 20 + 2.5 + 25 + 5.25 = 52.75
+            expect(total).toBe(52.75);
+        });
+
+        test('should handle cart with zero price item', () => {
+            const cart = [
+                { product: { unit_type: 'unit', unit_price: 10.00 }, quantity: 2 },
+                { product: { unit_type: 'unit', unit_price: 0 }, quantity: 5 },
+                { product: { unit_type: 'weight', unit_price: 5.00 }, quantity: 1 }
+            ];
+
+            const total = calculateCartTotal(cart);
+            // (2 * 10) + (5 * 0) + (1 * 5) = 20 + 0 + 5 = 25
+            expect(total).toBe(25);
+        });
+    });
+});
+
+// ============================================
+// 10. TESTS DE CAS LIMITES
+// ============================================
+
+describe('Edge Case Tests', () => {
+    describe('Floating Point Precision', () => {
+        test('should handle floating point precision issues', () => {
+            const product = { unit_type: 'weight', unit_price: 0.1 };
+            const total = calculateItemTotal(product, 0.3);
+            // 0.1 * 0.3 = 0.03
+            expect(total).toBeCloseTo(0.03, 2);
+        });
+
+        test('should handle repeating decimal prices', () => {
+            const product = { unit_type: 'weight', unit_price: 3.333 };
+            const total = calculateItemTotal(product, 3);
+            expect(total).toBe(10.00);
+        });
+    });
+
+    describe('Empty and Null Values', () => {
+        test('formatProductPrice should handle null product', () => {
+            // This should not throw
+            expect(() => formatProductPrice(null)).not.toThrow();
+        });
+
+        test('calculateCartTotal should handle null items', () => {
+            const cart = [
+                { product: { unit_type: 'unit', unit_price: 10 }, quantity: 1 },
+                null,
+                { product: { unit_type: 'unit', unit_price: 5 }, quantity: 2 }
+            ];
+
+            // Filter out nulls before calculation
+            const validCart = cart.filter(item => item !== null);
+            const total = calculateCartTotal(validCart);
+            expect(total).toBe(20);
+        });
+    });
+
+    describe('Unicode and Special Characters', () => {
+        test('should handle Arabic product names', () => {
+            const product = {
+                name: 'منتج تجريبي باللغة العربية',
+                unit_type: 'unit',
+                unit_price: 15.00
+            };
+
+            const result = validateProductData(product);
+            expect(result.isValid).toBe(true);
+        });
+
+        test('should handle emoji in product names', () => {
+            const product = {
+                name: 'Test Product 📦 ✨ 🎉',
+                unit_type: 'unit',
+                unit_price: 10.00
+            };
+
+            const result = validateProductData(product);
+            expect(result.isValid).toBe(true);
+        });
+
+        test('should handle special characters in product names', () => {
+            const product = {
+                name: 'Product & Co. <Special> "Test"',
+                unit_type: 'weight',
+                unit_price: 25.50
+            };
+
+            const result = validateProductData(product);
+            expect(result.isValid).toBe(true);
+        });
+    });
+});

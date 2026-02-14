@@ -1,0 +1,374 @@
+/**
+ * CSS Custom Properties (Variables) for SUPER_P0S Cashier System
+ * 
+ * This file contains all CSS custom properties for consistent theming.
+ * Import this file first in your main stylesheet.
+ * 
+ * Usage:
+ * @import url('variables.css');
+ * 
+ * Or in HTML:
+ * <link rel="stylesheet" href="css/variables.css">
+ */
+
+:root {
+    /* ============================================
+       COLOR PALETTE
+       ============================================ */
+    
+    /* Primary Colors */
+    --color-primary: #2c3e50;
+    --color-primary-light: #34495e;
+    --color-primary-dark: #1a252f;
+    
+    /* Accent Colors */
+    --color-accent: #2980b9;
+    --color-accent-dark: #1c5985;
+    --color-accent-light: #3498db;
+    --color-accent-bg: #ebf5fb;
+    
+    /* Semantic Colors - Success */
+    --color-success: #27ae60;
+    --color-success-dark: #219150;
+    --color-success-light: #e8f5e9;
+    --color-success-bg: #e8f5e9;
+    
+    /* Semantic Colors - Danger */
+    --color-danger: #c0392b;
+    --color-danger-light: #e74c3c;
+    --color-danger-bg: #ffebee;
+    
+    /* Semantic Colors - Warning */
+    --color-warning: #f39c12;
+    --color-warning-dark: #e67e22;
+    --color-warning-bg: #fff8e6;
+    
+    /* Semantic Colors - Info */
+    --color-info: #3498db;
+    --color-info-bg: #ebf5fb;
+    
+    /* Neutral Colors - Gray Scale */
+    --color-white: #ffffff;
+    --color-gray-50: #fafafa;
+    --color-gray-100: #f5f7fa;
+    --color-gray-200: #eef1f5;
+    --color-gray-300: #e1e4e8;
+    --color-gray-400: #d1d5db;
+    --color-gray-500: #9ca3af;
+    --color-gray-600: #7f8c8d;
+    --color-gray-700: #555555;
+    --color-gray-800: #333333;
+    --color-gray-900: #1a1a1a;
+    --color-black: #000000;
+    
+    /* Background Colors */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f7fa;
+    --bg-tertiary: #eef1f5;
+    --bg-dark: #2c3e50;
+    --bg-darker: #1a252f;
+    --bg-overlay: rgba(0, 0, 0, 0.5);
+    --bg-overlay-light: rgba(0, 0, 0, 0.3);
+    
+    /* Text Colors */
+    --text-primary: #333333;
+    --text-secondary: #555555;
+    --text-muted: #7f8c8d;
+    --text-light: #bdc3c7;
+    --text-inverse: #ffffff;
+    --text-link: #2980b9;
+    --text-success: #27ae60;
+    --text-danger: #c0392b;
+    --text-warning: #f39c12;
+    
+    /* Border Colors */
+    --border-default: #e1e4e8;
+    --border-light: #f0f2f5;
+    --border-dark: #d1d5db;
+    --border-focus: #2980b9;
+    --border-error: #e74c3c;
+    --border-success: #27ae60;
+    
+    /* Stock Status Colors */
+    --stock-in-stock: #27ae60;
+    --stock-in-stock-bg: #e8f5e9;
+    --stock-low: #f39c12;
+    --stock-low-bg: #fff8e6;
+    --stock-out: #e74c3c;
+    --stock-out-bg: #ffebee;
+    
+    /* Payment Method Colors */
+    --payment-cash: #27ae60;
+    --payment-cash-bg: #e8f5e9;
+    --payment-card: #3498db;
+    --payment-card-bg: #ebf5fb;
+    --payment-credit: #f39c12;
+    --payment-credit-bg: #fff8e6;
+    --payment-split: #9b59b6;
+    --payment-split-bg: #f3e5f5;
+    
+    /* ============================================
+       TYPOGRAPHY
+       ============================================ */
+    
+    /* Font Families */
+    --font-primary: 'Cairo', 'Tajawal', 'IBM Plex Sans Arabic', sans-serif;
+    --font-english: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+    --font-mono: 'Courier New', 'Consolas', monospace;
+    
+    /* Font Sizes */
+    --text-xs: 10px;
+    --text-sm: 12px;
+    --text-base: 14px;
+    --text-md: 16px;
+    --text-lg: 18px;
+    --text-xl: 20px;
+    --text-2xl: 24px;
+    --text-3xl: 32px;
+    --text-4xl: 38px;
+    --text-5xl: 48px;
+    
+    /* Font Weights */
+    --font-light: 300;
+    --font-normal: 400;
+    --font-medium: 500;
+    --font-semibold: 600;
+    --font-bold: 700;
+    --font-extrabold: 800;
+    
+    /* Line Heights */
+    --leading-none: 1;
+    --leading-tight: 1.2;
+    --leading-snug: 1.4;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.7;
+    --leading-loose: 2;
+    
+    /* Letter Spacing */
+    --tracking-tighter: -0.05em;
+    --tracking-tight: -0.025em;
+    --tracking-normal: 0;
+    --tracking-wide: 0.025em;
+    --tracking-wider: 0.05em;
+    
+    /* ============================================
+       SPACING
+       ============================================ */
+    
+    /* Spacing Scale (4px base) */
+    --spacing-0: 0;
+    --spacing-px: 1px;
+    --spacing-0-5: 2px;
+    --spacing-1: 4px;
+    --spacing-1-5: 6px;
+    --spacing-2: 8px;
+    --spacing-2-5: 10px;
+    --spacing-3: 12px;
+    --spacing-3-5: 14px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-7: 28px;
+    --spacing-8: 32px;
+    --spacing-9: 36px;
+    --spacing-10: 40px;
+    --spacing-11: 44px;
+    --spacing-12: 48px;
+    --spacing-14: 56px;
+    --spacing-16: 64px;
+    --spacing-20: 80px;
+    --spacing-24: 96px;
+    
+    /* Spacing Aliases */
+    --spacing-xs: var(--spacing-1);
+    --spacing-sm: var(--spacing-2);
+    --spacing-md: var(--spacing-4);
+    --spacing-lg: var(--spacing-6);
+    --spacing-xl: var(--spacing-8);
+    --spacing-2xl: var(--spacing-12);
+    
+    /* ============================================
+       SIZING
+       ============================================ */
+    
+    /* Component Sizes */
+    --size-xs: 24px;
+    --size-sm: 32px;
+    --size-md: 40px;
+    --size-lg: 48px;
+    --size-xl: 56px;
+    --size-2xl: 64px;
+    
+    /* Icon Sizes */
+    --icon-xs: 12px;
+    --icon-sm: 16px;
+    --icon-md: 20px;
+    --icon-lg: 24px;
+    --icon-xl: 32px;
+    
+    /* Container Widths */
+    --container-sm: 640px;
+    --container-md: 768px;
+    --container-lg: 1024px;
+    --container-xl: 1280px;
+    
+    /* Sidebar Width */
+    --sidebar-width: 220px;
+    --sidebar-width-collapsed: 60px;
+    --sidebar-width-expanded: 280px;
+    
+    /* ============================================
+       BORDER RADIUS
+       ============================================ */
+    
+    --radius-none: 0;
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --radius-xl: 12px;
+    --radius-2xl: 16px;
+    --radius-3xl: 24px;
+    --radius-full: 9999px;
+    
+    /* ============================================
+       SHADOWS
+       ============================================ */
+    
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.04);
+    --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.25);
+    --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+    --shadow-none: none;
+    
+    /* Focus Ring */
+    --shadow-focus: 0 0 0 3px rgba(41, 128, 185, 0.15);
+    --shadow-focus-error: 0 0 0 3px rgba(231, 76, 60, 0.15);
+    --shadow-focus-success: 0 0 0 3px rgba(39, 174, 96, 0.15);
+    
+    /* ============================================
+       TRANSITIONS
+       ============================================ */
+    
+    /* Duration */
+    --duration-fast: 0.1s;
+    --duration-normal: 0.2s;
+    --duration-slow: 0.3s;
+    --duration-slower: 0.5s;
+    
+    /* Timing Functions */
+    --ease-linear: linear;
+    --ease-in: cubic-bezier(0.4, 0, 1, 1);
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    /* Transition Presets */
+    --transition-fast: var(--duration-fast) var(--ease-out);
+    --transition-normal: var(--duration-normal) var(--ease-out);
+    --transition-slow: var(--duration-slow) var(--ease-out);
+    --transition-colors: background-color var(--duration-normal) var(--ease-out),
+                         color var(--duration-normal) var(--ease-out),
+                         border-color var(--duration-normal) var(--ease-out);
+    --transition-transform: transform var(--duration-normal) var(--ease-out);
+    --transition-shadow: box-shadow var(--duration-normal) var(--ease-out);
+    --transition-all: all var(--duration-normal) var(--ease-out);
+    
+    /* ============================================
+       Z-INDEX
+       ============================================ */
+    
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-fixed: 300;
+    --z-modal-backdrop: 400;
+    --z-modal: 500;
+    --z-popover: 600;
+    --z-tooltip: 700;
+    --z-notification: 800;
+    --z-overlay: 900;
+    --z-max: 9999;
+    
+    /* ============================================
+       BREAKPOINTS (for reference in JS)
+       ============================================ */
+    
+    --breakpoint-sm: 640px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1024px;
+    --breakpoint-xl: 1280px;
+    --breakpoint-2xl: 1536px;
+}
+
+/* ============================================
+   DARK MODE SUPPORT (Optional)
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+    :root.auto-theme {
+        --bg-primary: #1a1a1a;
+        --bg-secondary: #2d2d2d;
+        --bg-tertiary: #3d3d3d;
+        
+        --text-primary: #f0f0f0;
+        --text-secondary: #d0d0d0;
+        --text-muted: #a0a0a0;
+        
+        --border-default: #4d4d4d;
+        --border-light: #3d3d3d;
+        
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* Dark theme class */
+.dark-theme {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --bg-tertiary: #3d3d3d;
+    
+    --text-primary: #f0f0f0;
+    --text-secondary: #d0d0d0;
+    --text-muted: #a0a0a0;
+    
+    --border-default: #4d4d4d;
+    --border-light: #3d3d3d;
+    
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================
+   COMPACT MODE
+   ============================================ */
+
+.compact-mode {
+    --spacing-2: 6px;
+    --spacing-3: 10px;
+    --spacing-4: 12px;
+    --spacing-6: 18px;
+    
+    --text-sm: 11px;
+    --text-base: 13px;
+    
+    --radius-md: 4px;
+    --radius-lg: 6px;
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+    :root {
+        --color-primary: #000000;
+        --bg-primary: #ffffff;
+        --bg-secondary: #ffffff;
+        --border-default: #000000;
+    }
+}

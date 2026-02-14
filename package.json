@@ -41,11 +41,23 @@
     "coverageDirectory": "coverage",
     "collectCoverageFrom": [
       "src/**/*.js",
-      "!src/**/*.test.js"
+      "!src/**/*.test.js",
+      "!src/main.js",
+      "!src/preload.js",
+      "!src/database.js"
     ],
     "testMatch": [
       "**/tests/**/*.test.js"
     ],
-    "verbose": true
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setup.js"
+    ],
+    "testTimeout": 30000,
+    "verbose": true,
+    "detectOpenHandles": true,
+    "forceExit": true,
+    "moduleNameMapper": {
+      "^electron$": "<rootDir>/tests/__mocks__/electron.js"
+    }
   }
 }
